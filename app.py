@@ -22,8 +22,16 @@ LANG = {
         "menu_rh": "Contactar RH",
         "menu_logout": "Sair",
         "login_error": "Número não encontrado",
-        "login_title": "Entrar no Sistema"
+        "login_title": "Entrar no Sistema",
+
+        # COMUNICADOS
+        "comms_general_title": "Geral",
+        "comms_general_text": "Caros trabalhadores, os payslips já estão disponíveis junto aos line managers.",
+
+        "comms_safety_title": "Segurança",
+        "comms_safety_text": "Reforçar medidas de segurança após incidente recente com equipamento."
     },
+
     "en": {
         "welcome": "Welcome to Unitrans Connect",
         "menu_profile": "My Profile",
@@ -32,10 +40,16 @@ LANG = {
         "menu_rh": "Contact HR",
         "menu_logout": "Logout",
         "login_error": "Worker number not found",
-        "login_title": "System Login"
+        "login_title": "System Login",
+
+        # COMUNICADOS
+        "comms_general_title": "General",
+        "comms_general_text": "Dear workers, payslips are now available with line managers.",
+
+        "comms_safety_title": "Safety",
+        "comms_safety_text": "Strengthen safety measures after a recent equipment incident."
     }
 }
-
 
 # ===============================
 # CARREGAR DADOS (SEGURO)
@@ -156,7 +170,7 @@ def perfil():
 
 
 # ===============================
-# FERIAS
+# FÉRIAS
 # ===============================
 @app.route("/ferias")
 def ferias():
@@ -174,7 +188,11 @@ def ferias():
 # ===============================
 @app.route("/comunicados")
 def comunicados():
-    return render_template("comunicados.html")
+
+    lang = session.get("lang", "pt")
+    t = LANG[lang]
+
+    return render_template("comunicados.html", t=t)
 
 
 # ===============================
