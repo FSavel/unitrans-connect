@@ -50,7 +50,7 @@ LANG = {
 }
 
 # ===============================
-# CARREGAR DADOS (ROBUSTO)
+# CARREGAR DADOS (ULTRA ROBUSTO)
 # ===============================
 def carregar_dados():
     try:
@@ -61,12 +61,12 @@ def carregar_dados():
             engine="python"
         )
 
-        # limpar espaços nos nomes das colunas
+        # limpar colunas
         df.columns = df.columns.str.strip()
+        df.columns = df.columns.str.replace("\ufeff", "", regex=True)
 
-        # preencher valores vazios
-        obj_cols = df.select_dtypes(include=["object"]).columns
-        df[obj_cols] = df[obj_cols].fillna("")
+        # limpar valores string
+        df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
         return df
 
@@ -76,20 +76,30 @@ def carregar_dados():
 
 
 # ===============================
-# BUSCAR TRABALHADOR
+# BUSCAR TRABALHADOR (INTELIGENTE)
 # ===============================
 def buscar(numero):
     df = carregar_dados()
 
     if df.empty:
+        print("CSV vazio")
         return None
 
-    if "Numero do trabalhador" not in df.columns:
-        print("Coluna não encontrada no CSV:", df.columns)
+    print("COLUNAS DETECTADAS:", df.columns.tolist())
+
+    # localizar coluna automaticamente
+    col_numero = None
+    for col in df.columns:
+        if "trabalhador" in col.lower():
+            col_numero = col
+            break
+
+    if not col_numero:
+        print("Coluna de trabalhador não encontrada")
         return None
 
     trabalhador = df[
-        df["Numero do trabalhador"].astype(str) == str(numero)
+        df[col_numero].astype(str).str.strip() == str(numero).strip()
     ]
 
     if trabalhador.empty:
@@ -165,12 +175,10 @@ def menu():
 # ===============================
 @app.route("/perfil")
 def perfil():
-
     if "numero" not in session:
         return redirect(url_for("login"))
 
     user = buscar(session["numero"])
-
     return render_template("perfil.html", user=user)
 
 
@@ -179,12 +187,10 @@ def perfil():
 # ===============================
 @app.route("/ferias")
 def ferias():
-
     if "numero" not in session:
         return redirect(url_for("login"))
 
     user = buscar(session["numero"])
-
     return render_template("ferias.html", user=user)
 
 
@@ -209,7 +215,7 @@ def rh():
 
 
 # ===============================
-# SOBRE
+# SOBRE NÓS
 # ===============================
 @app.route("/sobre")
 def sobre():
