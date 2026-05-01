@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfil</title>
+
+<style>
+body{
+font-family:Arial;
+padding:20px;
+background:#f2f2f2;
+}
+
+.box{
+background:white;
+padding:25px;
+border-radius:15px;
+}
+
+p{
+margin:10px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Meu Perfil</h2>
+
+<p><b>Nome:</b> {{ user["Nome"] }}</p>
+<p><b>Número:</b> {{ user["Numero do trabalhador"] }}</p>
+<p><b>BI:</b> {{ user["Numero de BI"] }}</p>
+<p><b>Carta:</b> {{ user["Carta de Conducao"] }}</p>
+<p><b>Início Contrato:</b> {{ user["Inicio de Contrato"] }}</p>
+<p><b>Fim Contrato:</b> {{ user["Fim de contrato"] }}</p>
+
+</div>
+
+</body>
+</html>
