@@ -1,148 +1,100 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import pandas as pd
-import os
 
 app = Flask(__name__)
-app.secret_key = "unitrans2026"
+app.secret_key = "unitrans_secret_key"
 
-ARQUIVO = "Unitrans.csv"
+# =========================
+# CONFIGURAÇÃO DO FICHEIRO
+# =========================
+# ALTERA AQUI SE USARES .csv ou .xlsx
+FICHEIRO_DADOS = "unitrans.csv"
 
-
-# ===============================
-# LER DADOS
-# ===============================
+# =========================
+# CARREGAR DADOS COM SEGURANÇA
+# =========================
 def carregar_dados():
-    df = pd.read_csv(ARQUIVO)
-    df.fillna("", inplace=True)
+    # Detecta automaticamente CSV ou Excel
+    if FICHEIRO_DADOS.endswith(".csv"):
+        df = pd.read_csv(FICHEIRO_DADOS)
+    else:
+        df = pd.read_excel(FICHEIRO_DADOS)
+
+    # Evita erro com float64 ao preencher NaN
+    obj_cols = df.select_dtypes(include=["object"]).columns
+    df[obj_cols] = df[obj_cols].fillna("")
+
     return df
 
-
-# ===============================
+# =========================
 # BUSCAR TRABALHADOR
-# ===============================
-def buscar(numero):
+# =========================
+def buscar(codigo):
     df = carregar_dados()
 
-    trabalhador = df[
-        df["Numero do trabalhador"].astype(str) == str(numero)
-    ]
+    # normalizar código como string
+    df["CODIGO"] = df["CODIGO"].astype(str)
+    codigo = str(codigo)
 
-    if trabalhador.empty:
+    resultado = df[df["CODIGO"] == codigo]
+
+    if resultado.empty:
         return None
 
-    return trabalhador.iloc[0].to_dict()
+    return resultado.iloc[0].to_dict()
 
+# =========================
+# ROTAS
+# =========================
 
-# ===============================
-# HOME
-# ===============================
 @app.route("/")
 def home():
-    return render_template("idioma.html")
+    return redirect(url_for("idioma"))
 
+@app.route("/idioma/pt")
+def idioma_pt():
+    return render_template("idioma.html", lang="pt")
 
-# ===============================
-# IDIOMA
-# ===============================
-@app.route("/idioma/<lang>")
-def idioma(lang):
-    session["lang"] = lang
-    return redirect("/login")
+@app.route("/idioma/en")
+def idioma_en():
+    return render_template("idioma.html", lang="en")
 
-
-# ===============================
-# LOGIN
-# ===============================
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
-    erro = ""
-
     if request.method == "POST":
-
-        numero = request.form["numero"]
+        numero = request.form.get("codigo")
 
         user = buscar(numero)
 
         if user:
-            session["numero"] = numero
-            return redirect("/menu")
+            session["user"] = user
+            return redirect(url_for("menu"))
         else:
-            erro = "Número não encontrado."
+            return render_template("login.html", erro="Código inválido")
 
-    return render_template("login.html", erro=erro)
+    return render_template("login.html")
 
-
-# ===============================
-# MENU
-# ===============================
 @app.route("/menu")
 def menu():
+    if "user" not in session:
+        return redirect(url_for("login"))
 
-    if "numero" not in session:
-        return redirect("/login")
+    return render_template("menu.html", user=session["user"])
 
-    user = buscar(session["numero"])
-
-    return render_template("menu.html", user=user)
-
-
-# ===============================
-# PERFIL
-# ===============================
-@app.route("/perfil")
-def perfil():
-
-    if "numero" not in session:
-        return redirect("/login")
-
-    user = buscar(session["numero"])
-
-    return render_template("perfil.html", user=user)
-
-
-# ===============================
-# FERIAS
-# ===============================
-@app.route("/ferias")
-def ferias():
-
-    if "numero" not in session:
-        return redirect("/login")
-
-    user = buscar(session["numero"])
-
-    return render_template("ferias.html", user=user)
-
-
-# ===============================
-# COMUNICADOS
-# ===============================
-@app.route("/comunicados")
-def comunicados():
-    return render_template("comunicados.html")
-
-
-# ===============================
-# RH
-# ===============================
-@app.route("/rh")
-def rh():
-    return render_template("rh.html")
-
-
-# ===============================
-# LOGOUT
-# ===============================
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return redirect(url_for("login"))
 
+# =========================
+# ERRO HANDLER (IMPORTANTE)
+# =========================
+@app.errorhandler(500)
+def erro_interno(e):
+    return "Erro interno no servidor. Verifique os logs.", 500
 
-# ===============================
-# START
-# ===============================
+# =========================
+# RUN LOCAL (IGNORADO NO RENDER)
+# =========================
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
