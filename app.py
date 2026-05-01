@@ -50,7 +50,7 @@ LANG = {
 }
 
 # ===============================
-# CARREGAR DADOS (ULTRA ROBUSTO)
+# CARREGAR DADOS (ROBUSTO FINAL)
 # ===============================
 def carregar_dados():
     try:
@@ -61,12 +61,13 @@ def carregar_dados():
             engine="python"
         )
 
-        # limpar colunas
+        # limpar nomes das colunas
         df.columns = df.columns.str.strip()
         df.columns = df.columns.str.replace("\ufeff", "", regex=True)
 
-        # limpar valores string
-        df = df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+        # LIMPEZA SEGURA (substitui applymap)
+        for col in df.select_dtypes(include=["object"]).columns:
+            df[col] = df[col].astype(str).str.strip()
 
         return df
 
@@ -76,7 +77,7 @@ def carregar_dados():
 
 
 # ===============================
-# BUSCAR TRABALHADOR (INTELIGENTE)
+# BUSCAR TRABALHADOR
 # ===============================
 def buscar(numero):
     df = carregar_dados()
@@ -87,7 +88,6 @@ def buscar(numero):
 
     print("COLUNAS DETECTADAS:", df.columns.tolist())
 
-    # localizar coluna automaticamente
     col_numero = None
     for col in df.columns:
         if "trabalhador" in col.lower():
@@ -215,7 +215,7 @@ def rh():
 
 
 # ===============================
-# SOBRE NÓS
+# SOBRE
 # ===============================
 @app.route("/sobre")
 def sobre():
