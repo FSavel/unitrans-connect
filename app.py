@@ -1,100 +1,176 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import pandas as pd
+import os
 
 app = Flask(__name__)
-app.secret_key = "unitrans_secret_key"
+app.secret_key = "unitrans2026"
 
-# =========================
-# CONFIGURAÇÃO DO FICHEIRO
-# =========================
-# ALTERA AQUI SE USARES .csv ou .xlsx
-FICHEIRO_DADOS = "unitrans.csv"
+# ===============================
+# FICHEIRO DE DADOS
+# ===============================
+ARQUIVO = "Unitrans.csv"
 
-# =========================
-# CARREGAR DADOS COM SEGURANÇA
-# =========================
+
+# ===============================
+# CARREGAR DADOS (SEGURO)
+# ===============================
 def carregar_dados():
-    # Detecta automaticamente CSV ou Excel
-    if FICHEIRO_DADOS.endswith(".csv"):
-        df = pd.read_csv(FICHEIRO_DADOS)
-    else:
-        df = pd.read_excel(FICHEIRO_DADOS)
+    try:
+        df = pd.read_csv(ARQUIVO, encoding="utf-8-sig")
 
-    # Evita erro com float64 ao preencher NaN
-    obj_cols = df.select_dtypes(include=["object"]).columns
-    df[obj_cols] = df[obj_cols].fillna("")
+        # Corrige apenas colunas de texto (evita erro float64)
+        obj_cols = df.select_dtypes(include=["object"]).columns
+        df[obj_cols] = df[obj_cols].fillna("")
 
-    return df
+        return df
 
-# =========================
+    except Exception as e:
+        print("Erro ao carregar CSV:", e)
+        return pd.DataFrame()
+
+
+# ===============================
 # BUSCAR TRABALHADOR
-# =========================
-def buscar(codigo):
+# ===============================
+def buscar(numero):
     df = carregar_dados()
 
-    # normalizar código como string
-    df["CODIGO"] = df["CODIGO"].astype(str)
-    codigo = str(codigo)
-
-    resultado = df[df["CODIGO"] == codigo]
-
-    if resultado.empty:
+    if df.empty:
         return None
 
-    return resultado.iloc[0].to_dict()
+    # garantir que coluna existe
+    if "Numero do trabalhador" not in df.columns:
+        print("Coluna 'Numero do trabalhador' não encontrada no CSV")
+        return None
 
-# =========================
-# ROTAS
-# =========================
+    trabalhador = df[
+        df["Numero do trabalhador"].astype(str) == str(numero)
+    ]
 
+    if trabalhador.empty:
+        return None
+
+    return trabalhador.iloc[0].to_dict()
+
+
+# ===============================
+# HOME
+# ===============================
 @app.route("/")
 def home():
-    return redirect(url_for("idioma"))
+    return render_template("idioma.html")
 
-@app.route("/idioma/pt")
-def idioma_pt():
-    return render_template("idioma.html", lang="pt")
 
-@app.route("/idioma/en")
-def idioma_en():
-    return render_template("idioma.html", lang="en")
+# ===============================
+# IDIOMA
+# ===============================
+@app.route("/idioma/<lang>")
+def idioma(lang):
+    session["lang"] = lang
+    return redirect(url_for("login"))
 
+
+# ===============================
+# LOGIN
+# ===============================
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
+    erro = ""
+
     if request.method == "POST":
-        numero = request.form.get("codigo")
+
+        numero = request.form.get("numero")
 
         user = buscar(numero)
 
         if user:
-            session["user"] = user
+            session["numero"] = numero
             return redirect(url_for("menu"))
         else:
-            return render_template("login.html", erro="Código inválido")
+            erro = "Número não encontrado."
 
-    return render_template("login.html")
+    return render_template("login.html", erro=erro)
 
+
+# ===============================
+# MENU
+# ===============================
 @app.route("/menu")
 def menu():
-    if "user" not in session:
+
+    if "numero" not in session:
         return redirect(url_for("login"))
 
-    return render_template("menu.html", user=session["user"])
+    user = buscar(session["numero"])
 
+    return render_template("menu.html", user=user)
+
+
+# ===============================
+# PERFIL
+# ===============================
+@app.route("/perfil")
+def perfil():
+
+    if "numero" not in session:
+        return redirect(url_for("login"))
+
+    user = buscar(session["numero"])
+
+    return render_template("perfil.html", user=user)
+
+
+# ===============================
+# FERIAS
+# ===============================
+@app.route("/ferias")
+def ferias():
+
+    if "numero" not in session:
+        return redirect(url_for("login"))
+
+    user = buscar(session["numero"])
+
+    return render_template("ferias.html", user=user)
+
+
+# ===============================
+# COMUNICADOS
+# ===============================
+@app.route("/comunicados")
+def comunicados():
+    return render_template("comunicados.html")
+
+
+# ===============================
+# RH
+# ===============================
+@app.route("/rh")
+def rh():
+    return render_template("rh.html")
+
+
+# ===============================
+# LOGOUT
+# ===============================
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("home"))
 
-# =========================
-# ERRO HANDLER (IMPORTANTE)
-# =========================
+
+# ===============================
+# ERRO 500 (DEBUG)
+# ===============================
 @app.errorhandler(500)
-def erro_interno(e):
-    return "Erro interno no servidor. Verifique os logs.", 500
+def erro_500(e):
+    return "Erro interno no servidor. Verifique os logs no Render.", 500
 
-# =========================
-# RUN LOCAL (IGNORADO NO RENDER)
-# =========================
+
+# ===============================
+# START
+# ===============================
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
