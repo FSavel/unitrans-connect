@@ -32,13 +32,27 @@ font-weight:bold;
 
 <body>
 
-<h2>Olá {{ user["Nome"] }}</h2>
+<h2>{{ t["welcome"] }}, {{ user["Nome"] }}</h2>
 
-<div class="card"><a href="/perfil">👤 Meu Perfil</a></div>
-<div class="card"><a href="/ferias">🏖️ Férias e Faltas</a></div>
-<div class="card"><a href="/comunicados">📢 Comunicados</a></div>
-<div class="card"><a href="/rh">☎️ Contactar RH</a></div>
-<div class="card"><a href="/logout">🚪 Sair</a></div>
+<div class="card">
+    <a href="/perfil">👤 {{ t["menu_profile"] }}</a>
+</div>
+
+<div class="card">
+    <a href="/ferias">🏖️ {{ t["menu_leave"] }}</a>
+</div>
+
+<div class="card">
+    <a href="/comunicados">📢 {{ t["menu_comms"] }}</a>
+</div>
+
+<div class="card">
+    <a href="/rh">☎️ {{ t["menu_rh"] }}</a>
+</div>
+
+<div class="card">
+    <a href="/logout">🚪 {{ t["menu_logout"] }}</a>
+</div>
 
 </body>
 </html>
