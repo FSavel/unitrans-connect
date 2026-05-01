@@ -50,17 +50,30 @@ LANG = {
 }
 
 # ===============================
-# CARREGAR DADOS (SEGURO)
+# CARREGAR DADOS (ROBUSTO)
 # ===============================
 def carregar_dados():
     try:
-        df = pd.read_csv(ARQUIVO, encoding="utf-8-sig")
+        df = pd.read_csv(
+            ARQUIVO,
+            encoding="utf-8-sig",
+            sep=None,
+            engine="python"
+        )
+
+        # limpar espaços nos nomes das colunas
+        df.columns = df.columns.str.strip()
+
+        # preencher valores vazios
         obj_cols = df.select_dtypes(include=["object"]).columns
         df[obj_cols] = df[obj_cols].fillna("")
+
         return df
+
     except Exception as e:
         print("Erro ao carregar CSV:", e)
         return pd.DataFrame()
+
 
 # ===============================
 # BUSCAR TRABALHADOR
@@ -69,6 +82,10 @@ def buscar(numero):
     df = carregar_dados()
 
     if df.empty:
+        return None
+
+    if "Numero do trabalhador" not in df.columns:
+        print("Coluna não encontrada no CSV:", df.columns)
         return None
 
     trabalhador = df[
@@ -80,6 +97,7 @@ def buscar(numero):
 
     return trabalhador.iloc[0].to_dict()
 
+
 # ===============================
 # HOME
 # ===============================
@@ -87,16 +105,19 @@ def buscar(numero):
 def home():
     return render_template("idioma.html")
 
+
 # ===============================
 # IDIOMA
 # ===============================
 @app.route("/idioma/<lang>")
 def idioma(lang):
+
     if lang not in ["pt", "en"]:
         lang = "pt"
 
     session["lang"] = lang
     return redirect(url_for("login"))
+
 
 # ===============================
 # LOGIN
@@ -121,6 +142,7 @@ def login():
 
     return render_template("login.html", erro=erro, t=t)
 
+
 # ===============================
 # MENU
 # ===============================
@@ -137,36 +159,46 @@ def menu():
 
     return render_template("menu.html", user=user, t=t)
 
+
 # ===============================
 # PERFIL
 # ===============================
 @app.route("/perfil")
 def perfil():
+
     if "numero" not in session:
         return redirect(url_for("login"))
 
     user = buscar(session["numero"])
+
     return render_template("perfil.html", user=user)
+
 
 # ===============================
 # FÉRIAS
 # ===============================
 @app.route("/ferias")
 def ferias():
+
     if "numero" not in session:
         return redirect(url_for("login"))
 
     user = buscar(session["numero"])
+
     return render_template("ferias.html", user=user)
+
 
 # ===============================
 # COMUNICADOS
 # ===============================
 @app.route("/comunicados")
 def comunicados():
+
     lang = session.get("lang", "pt")
     t = LANG[lang]
+
     return render_template("comunicados.html", t=t)
+
 
 # ===============================
 # RH
@@ -175,12 +207,14 @@ def comunicados():
 def rh():
     return render_template("rh.html")
 
+
 # ===============================
-# SOBRE NÓS (NOVO)
+# SOBRE
 # ===============================
 @app.route("/sobre")
 def sobre():
     return render_template("sobre.html")
+
 
 # ===============================
 # LOGOUT
@@ -190,12 +224,14 @@ def logout():
     session.clear()
     return redirect(url_for("home"))
 
+
 # ===============================
 # ERRO 500
 # ===============================
 @app.errorhandler(500)
 def erro_500(e):
     return "Erro interno no servidor. Verifique os logs no Render.", 500
+
 
 # ===============================
 # START
