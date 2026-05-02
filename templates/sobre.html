@@ -1,16 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ session['lang'] if session.get('lang') else 'pt' }}">
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-{% if session.get("lang") == "en" %}
-About Us
-{% else %}
-Sobre Nós
-{% endif %}
-</title>
+<title>Sobre Nós / About Us</title>
 
 <style>
 body{
@@ -35,7 +29,7 @@ body{
 h1{
     text-align:center;
     color:#0d4d2c;
-    margin-bottom:10px;
+    margin-bottom:20px;
 }
 
 h2{
@@ -43,15 +37,23 @@ h2{
     margin-top:25px;
 }
 
-p{
-    line-height:1.6;
-    color:#333;
-}
-
 .section{
     margin-top:20px;
     padding-top:10px;
     border-top:1px solid #eee;
+}
+
+.pt{
+    margin-bottom:6px;
+    color:#333;
+    line-height:1.6;
+}
+
+.en{
+    margin-bottom:12px;
+    color:#666;
+    font-style:italic;
+    line-height:1.6;
 }
 
 .label{
@@ -83,39 +85,32 @@ a.button{
 <div class="container">
 <div class="card">
 
-<h1>
-{% if session.get("lang") == "en" %}
-About Unitrans Connect
-{% else %}
-Sobre o Unitrans Connect
-{% endif %}
-</h1>
+<h1>Sobre Nós / About Us</h1>
 
-<p>
-{% if session.get("lang") == "en" %}
-Unitrans Connect is a digital platform designed to improve internal communication, HR access, and employee self-service through QR Code technology.
-{% else %}
+<!-- INTRO -->
+<div class="section">
+
+<p class="pt">
 Unitrans Connect é uma plataforma digital desenvolvida para facilitar o acesso dos colaboradores da Unitrans a informações internas, serviços de recursos humanos e comunicação organizacional através de QR Code.
-{% endif %}
 </p>
+
+<p class="en">
+Unitrans Connect is a digital platform designed to improve internal communication, HR access and employee self-service through QR Code technology.
+</p>
+
+</div>
 
 <!-- VISÃO -->
 <div class="section">
 
-<h2>
-{% if session.get("lang") == "en" %}
-Project Vision
-{% else %}
-Visão do Projeto
-{% endif %}
-</h2>
+<h2>Visão do Projeto / Project Vision</h2>
 
-<p>
-{% if session.get("lang") == "en" %}
-To create a simple, fast and accessible digital experience for all employees, reducing bureaucracy and improving internal communication.
-{% else %}
+<p class="pt">
 Criar uma experiência digital simples, rápida e acessível para todos os colaboradores, reduzindo burocracia e melhorando a comunicação interna.
-{% endif %}
+</p>
+
+<p class="en">
+To create a simple, fast and accessible digital experience for all employees, reducing bureaucracy and improving internal communication.
 </p>
 
 </div>
@@ -123,30 +118,20 @@ Criar uma experiência digital simples, rápida e acessível para todos os colab
 <!-- DESENVOLVEDOR -->
 <div class="section">
 
-<h2>
-{% if session.get("lang") == "en" %}
-Developer
-{% else %}
-Desenvolvedor
-{% endif %}
-</h2>
+<h2>Desenvolvedor / Developer</h2>
 
-<p>
-<span class="label">
-{% if session.get("lang") == "en" %}Name{% else %}Nome{% endif %}:
-</span>
-Firmino Salão Savel
+<p class="pt"><span class="label">Nome:</span> Firmino Salão Savel</p>
+<p class="en"><span class="label">Name:</span> Firmino Salão Savel</p>
+
+<p class="pt"><span class="label">Contactos:</span> +258 879 131 089 / +258 844 681 767</p>
+<p class="en"><span class="label">Contacts:</span> +258 879 131 089 / +258 844 681 767</p>
+
+<p class="pt"><span class="label">Emails:</span><br>
+Corporativo: firmino.savel@unitrans.co.za<br>
+Pessoal: firminosavel@gmail.com
 </p>
 
-<p>
-<span class="label">
-{% if session.get("lang") == "en" %}Contact{% else %}Contactos{% endif %}:
-</span>
-+258 879 131 089 / +258 844 681 767
-</p>
-
-<p>
-<span class="label">Email:</span><br>
+<p class="en"><span class="label">Emails:</span><br>
 Corporate: firmino.savel@unitrans.co.za<br>
 Personal: firminosavel@gmail.com
 </p>
@@ -156,15 +141,14 @@ Personal: firminosavel@gmail.com
 <!-- APOIO ESTRATÉGICO -->
 <div class="section">
 
-<h2>
-{% if session.get("lang") == "en" %}
-Strategic Support
-{% else %}
-Apoio Estratégico
-{% endif %}
-</h2>
+<h2>Apoio Estratégico / Strategic Support</h2>
 
-<p>
+<p class="pt">
+Chris Ford<br>
+Business Development Manager
+</p>
+
+<p class="en">
 Chris Ford<br>
 Business Development Manager
 </p>
@@ -174,36 +158,19 @@ Business Development Manager
 <!-- LOCALIZAÇÃO -->
 <div class="section">
 
-<h2>
-{% if session.get("lang") == "en" %}
-Location
-{% else %}
-Localização
-{% endif %}
-</h2>
+<h2>Localização / Location</h2>
 
-<p>
-Xinavane, Mozambique
-</p>
+<p class="pt">Xinavane, Moçambique</p>
+<p class="en">Xinavane, Mozambique</p>
 
-<p>
 <a class="map-link" href="https://maps.app.goo.gl/w9hqgpDpVPmreZkb7" target="_blank">
-{% if session.get("lang") == "en" %}
-View on Google Maps
-{% else %}
-Ver no Google Maps
-{% endif %}
+Ver no Google Maps / View on Google Maps
 </a>
-</p>
 
 </div>
 
 <a href="/menu" class="button">
-{% if session.get("lang") == "en" %}
-Back to Menu
-{% else %}
-Voltar ao Menu
-{% endif %}
+Voltar / Back
 </a>
 
 </div>
