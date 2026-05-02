@@ -1,67 +1,139 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="{{ session['lang'] if session.get('lang') else 'pt' }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login</title>
+
+<title>
+{% if session.get("lang") == "en" %}
+Login
+{% else %}
+Entrar no Sistema
+{% endif %}
+</title>
 
 <style>
 body{
-font-family:Arial;
-background:#f2f2f2;
-padding:30px;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:url("/static/fundo.jpg") no-repeat center center fixed;
+    background-size:cover;
 }
 
-.box{
-max-width:420px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:15px;
-box-shadow:0 0 15px rgba(0,0,0,0.1);
+.overlay{
+    min-height:100vh;
+    background:rgba(0,0,0,0.55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    width:100%;
+    max-width:420px;
+    border-radius:14px;
+    padding:30px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.20);
+    text-align:center;
+}
+
+.logo{
+    width:90px;
+    margin-bottom:15px;
+}
+
+h1{
+    margin:0;
+    color:#0d4d2c;
+    font-size:28px;
+}
+
+.sub{
+    margin-top:10px;
+    margin-bottom:22px;
+    font-size:14px;
+    color:#666;
 }
 
 input{
-width:100%;
-padding:15px;
-margin:15px 0;
-border:1px solid #ccc;
-border-radius:10px;
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+    box-sizing:border-box;
 }
 
 button{
-width:100%;
-padding:15px;
-background:#0d4d2c;
-color:white;
-border:none;
-border-radius:10px;
-font-size:16px;
+    width:100%;
+    margin-top:15px;
+    padding:12px;
+    background:#0d4d2c;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
 }
 
-.erro{
-color:red;
-margin-top:10px;
+button:hover{
+    background:#14683c;
+}
+
+.error{
+    color:red;
+    margin-top:15px;
+    font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="overlay">
 
-<h2>Entrar no Sistema</h2>
+<div class="card">
+
+<img src="/static/logo.png" class="logo">
+
+<h1>
+{% if session.get("lang") == "en" %}
+Login to System
+{% else %}
+Entrar no Sistema
+{% endif %}
+</h1>
+
+<p class="sub">
+{% if session.get("lang") == "en" %}
+Enter your employee number
+{% else %}
+Insira o seu número de trabalhador
+{% endif %}
+</p>
 
 <form method="POST">
 
-<input type="text" name="numero" placeholder="Número de trabalhador" required>
+<input type="text" name="numero" required
+placeholder="{% if session.get('lang') == 'en' %}Employee Number{% else %}Número do Trabalhador{% endif %}">
 
-<button type="submit">Entrar</button>
+<button type="submit">
+{% if session.get("lang") == "en" %}
+Login
+{% else %}
+Entrar
+{% endif %}
+</button>
 
 </form>
 
-<p class="erro">{{ erro }}</p>
+{% if erro %}
+<div class="error">{{ erro }}</div>
+{% endif %}
 
+</div>
 </div>
 
 </body>
