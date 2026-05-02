@@ -15,42 +15,120 @@ ARQUIVO = "Unitrans.csv"
 # ===============================
 LANG = {
     "pt": {
+
+        # Geral
         "welcome": "Bem-vindo à Unitrans Connect",
+        "login_title": "Entrar no Sistema",
+        "login_error": "Número não encontrado",
+        "worker_number": "Número do trabalhador",
+        "enter": "Entrar",
+
+        # Menu
         "menu_profile": "Meu Perfil",
         "menu_leave": "Férias e Faltas",
         "menu_comms": "Comunicados",
         "menu_rh": "Contactar RH",
         "menu_logout": "Sair",
-        "login_error": "Número não encontrado",
-        "login_title": "Entrar no Sistema",
 
+        # Perfil
+        "profile_title": "Meu Perfil",
+        "name": "Nome",
+        "employee_number": "Número do trabalhador",
+        "absences": "Faltas",
+        "leave_balance": "Férias",
+        "id_number": "Número de BI",
+        "license": "Carta de Condução",
+        "contract_start": "Início de Contrato",
+        "contract_end": "Fim de contrato",
+
+        # Férias
+        "leave_title": "Férias e Faltas",
+        "request_leave": "Solicitar Férias",
+        "start_date": "Data de Início",
+        "end_date": "Data de Fim",
+        "submit_request": "Enviar Pedido",
+
+        # Comunicados
+        "comms_title": "Comunicados",
         "comms_general_title": "Geral",
         "comms_general_text": "Caros trabalhadores, os payslips já estão disponíveis junto aos line managers.",
-
         "comms_safety_title": "Segurança",
-        "comms_safety_text": "Reforçar medidas de segurança após incidente recente com equipamento."
+        "comms_safety_text": "Reforçar medidas de segurança após incidente recente com equipamento.",
+
+        # RH
+        "rh_title": "Contactar RH",
+        "rh_text": "Estamos disponíveis para apoiar.",
+        "suggestion_type": "Tipo de Mensagem",
+        "suggestion_option1": "Sugestão",
+        "suggestion_option2": "Reclamação",
+        "suggestion_option3": "Pedido RH",
+        "suggestion_option4": "Problema Técnico",
+        "message": "Mensagem",
+        "send": "Enviar",
+
+        # Sobre
+        "about": "Sobre Nós"
     },
 
     "en": {
+
+        # General
         "welcome": "Welcome to Unitrans Connect",
+        "login_title": "System Login",
+        "login_error": "Worker number not found",
+        "worker_number": "Employee Number",
+        "enter": "Login",
+
+        # Menu
         "menu_profile": "My Profile",
         "menu_leave": "Leave & Absences",
         "menu_comms": "Announcements",
         "menu_rh": "Contact HR",
         "menu_logout": "Logout",
-        "login_error": "Worker number not found",
-        "login_title": "System Login",
 
+        # Profile
+        "profile_title": "My Profile",
+        "name": "Name",
+        "employee_number": "Employee Number",
+        "absences": "Absences",
+        "leave_balance": "Leave Balance",
+        "id_number": "ID Number",
+        "license": "Driver License",
+        "contract_start": "Contract Start",
+        "contract_end": "Contract End",
+
+        # Leave
+        "leave_title": "Leave & Absences",
+        "request_leave": "Request Leave",
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "submit_request": "Submit Request",
+
+        # Announcements
+        "comms_title": "Announcements",
         "comms_general_title": "General",
         "comms_general_text": "Dear workers, payslips are now available with line managers.",
-
         "comms_safety_title": "Safety",
-        "comms_safety_text": "Strengthen safety measures after a recent equipment incident."
+        "comms_safety_text": "Strengthen safety measures after a recent equipment incident.",
+
+        # HR
+        "rh_title": "Contact HR",
+        "rh_text": "We are available to assist.",
+        "suggestion_type": "Message Type",
+        "suggestion_option1": "Suggestion",
+        "suggestion_option2": "Complaint",
+        "suggestion_option3": "HR Request",
+        "suggestion_option4": "Technical Issue",
+        "message": "Message",
+        "send": "Submit",
+
+        # About
+        "about": "About Us"
     }
 }
 
 # ===============================
-# CARREGAR DADOS (ROBUSTO FINAL)
+# CARREGAR CSV
 # ===============================
 def carregar_dados():
     try:
@@ -61,11 +139,9 @@ def carregar_dados():
             engine="python"
         )
 
-        # limpar nomes das colunas
         df.columns = df.columns.str.strip()
         df.columns = df.columns.str.replace("\ufeff", "", regex=True)
 
-        # LIMPEZA SEGURA (substitui applymap)
         for col in df.select_dtypes(include=["object"]).columns:
             df[col] = df[col].astype(str).str.strip()
 
@@ -75,7 +151,6 @@ def carregar_dados():
         print("Erro ao carregar CSV:", e)
         return pd.DataFrame()
 
-
 # ===============================
 # BUSCAR TRABALHADOR
 # ===============================
@@ -83,19 +158,16 @@ def buscar(numero):
     df = carregar_dados()
 
     if df.empty:
-        print("CSV vazio")
         return None
 
-    print("COLUNAS DETECTADAS:", df.columns.tolist())
-
     col_numero = None
+
     for col in df.columns:
         if "trabalhador" in col.lower():
             col_numero = col
             break
 
     if not col_numero:
-        print("Coluna de trabalhador não encontrada")
         return None
 
     trabalhador = df[
@@ -107,14 +179,12 @@ def buscar(numero):
 
     return trabalhador.iloc[0].to_dict()
 
-
 # ===============================
 # HOME
 # ===============================
 @app.route("/")
 def home():
     return render_template("idioma.html")
-
 
 # ===============================
 # IDIOMA
@@ -128,7 +198,6 @@ def idioma(lang):
     session["lang"] = lang
     return redirect(url_for("login"))
 
-
 # ===============================
 # LOGIN
 # ===============================
@@ -141,6 +210,7 @@ def login():
     erro = ""
 
     if request.method == "POST":
+
         numero = request.form.get("numero")
         user = buscar(numero)
 
@@ -151,7 +221,6 @@ def login():
             erro = t["login_error"]
 
     return render_template("login.html", erro=erro, t=t)
-
 
 # ===============================
 # MENU
@@ -169,30 +238,37 @@ def menu():
 
     return render_template("menu.html", user=user, t=t)
 
-
 # ===============================
 # PERFIL
 # ===============================
 @app.route("/perfil")
 def perfil():
+
     if "numero" not in session:
         return redirect(url_for("login"))
 
-    user = buscar(session["numero"])
-    return render_template("perfil.html", user=user)
+    lang = session.get("lang", "pt")
+    t = LANG[lang]
 
+    user = buscar(session["numero"])
+
+    return render_template("perfil.html", user=user, t=t)
 
 # ===============================
 # FÉRIAS
 # ===============================
 @app.route("/ferias")
 def ferias():
+
     if "numero" not in session:
         return redirect(url_for("login"))
 
-    user = buscar(session["numero"])
-    return render_template("ferias.html", user=user)
+    lang = session.get("lang", "pt")
+    t = LANG[lang]
 
+    user = buscar(session["numero"])
+
+    return render_template("ferias.html", user=user, t=t)
 
 # ===============================
 # COMUNICADOS
@@ -205,14 +281,16 @@ def comunicados():
 
     return render_template("comunicados.html", t=t)
 
-
 # ===============================
 # RH
 # ===============================
 @app.route("/rh")
 def rh():
-    return render_template("rh.html")
 
+    lang = session.get("lang", "pt")
+    t = LANG[lang]
+
+    return render_template("rh.html", t=t)
 
 # ===============================
 # SOBRE
@@ -221,7 +299,6 @@ def rh():
 def sobre():
     return render_template("sobre.html")
 
-
 # ===============================
 # LOGOUT
 # ===============================
@@ -229,15 +306,6 @@ def sobre():
 def logout():
     session.clear()
     return redirect(url_for("home"))
-
-
-# ===============================
-# ERRO 500
-# ===============================
-@app.errorhandler(500)
-def erro_500(e):
-    return "Erro interno no servidor. Verifique os logs no Render.", 500
-
 
 # ===============================
 # START
