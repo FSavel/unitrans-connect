@@ -1,119 +1,212 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="{{ session['lang'] if session.get('lang') else 'pt' }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Unitrans Connect</title>
+<title>
+{% if session.get("lang") == "en" %}
+About Us
+{% else %}
+Sobre Nós
+{% endif %}
+</title>
 
 <style>
 body{
     margin:0;
     font-family:Arial, sans-serif;
-    background:url("/static/fundo.jpg") no-repeat center center fixed;
-    background-size:cover;
+    background:#f4f6f8;
 }
 
-.overlay{
-    min-height:100vh;
-    background:rgba(0,0,0,0.55);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
+.container{
+    max-width:900px;
+    margin:auto;
     padding:20px;
 }
 
 .card{
     background:white;
+    border-radius:12px;
     padding:30px;
-    border-radius:14px;
-    text-align:center;
-    width:100%;
-    max-width:420px;
-    box-shadow:0 6px 16px rgba(0,0,0,0.25);
-}
-
-.logo{
-    width:90px;
-    margin-bottom:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
 h1{
+    text-align:center;
     color:#0d4d2c;
-    margin-bottom:25px;
+    margin-bottom:10px;
 }
 
-button{
-    width:100%;
-    padding:14px;
-    margin:10px 0;
-    border:none;
-    border-radius:8px;
-    font-size:16px;
-    cursor:pointer;
+h2{
+    color:#0d4d2c;
+    margin-top:25px;
+}
+
+p{
+    line-height:1.6;
+    color:#333;
+}
+
+.section{
+    margin-top:20px;
+    padding-top:10px;
+    border-top:1px solid #eee;
+}
+
+.label{
+    font-weight:bold;
+    color:#0d4d2c;
+}
+
+a.button{
+    display:block;
+    margin-top:25px;
+    text-align:center;
     background:#0d4d2c;
     color:white;
+    text-decoration:none;
+    padding:12px;
+    border-radius:8px;
 }
 
-button:hover{
-    background:#14683c;
-}
-
-.secondary{
-    background:#444;
-}
-
-.secondary:hover{
-    background:#222;
-}
-
-.small-text{
-    margin-top:15px;
-    font-size:13px;
-    color:#ddd;
+.map-link{
+    color:#0d4d2c;
+    font-weight:bold;
+    text-decoration:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
-
+<div class="container">
 <div class="card">
 
-<img src="/static/logo.png" class="logo">
-
 <h1>
-Unitrans Connect
+{% if session.get("lang") == "en" %}
+About Unitrans Connect
+{% else %}
+Sobre o Unitrans Connect
+{% endif %}
 </h1>
 
-<!-- BOTÃO SOBRE -->
-<a href="/sobre" style="text-decoration:none;">
-    <button class="secondary">
-        Sobre Nós / About Us
-    </button>
-</a>
+<p>
+{% if session.get("lang") == "en" %}
+Unitrans Connect is a digital platform designed to improve internal communication, HR access, and employee self-service through QR Code technology.
+{% else %}
+O Unitrans Connect é uma plataforma digital desenvolvida para facilitar o acesso dos colaboradores da Unitrans a informações internas, serviços de recursos humanos e comunicação organizacional através de QR Code.
+{% endif %}
+</p>
 
-<!-- SELEÇÃO DE IDIOMA -->
-<a href="/idioma/pt" style="text-decoration:none;">
-    <button>
-        Português
-    </button>
-</a>
+<!-- VISÃO -->
+<div class="section">
 
-<a href="/idioma/en" style="text-decoration:none;">
-    <button>
-        English
-    </button>
-</a>
+<h2>
+{% if session.get("lang") == "en" %}
+Project Vision
+{% else %}
+Visão do Projeto
+{% endif %}
+</h2>
 
-<p class="small-text">
-Seleccione o idioma / Select language
+<p>
+{% if session.get("lang") == "en" %}
+To create a simple, fast and accessible digital experience for all employees, reducing bureaucracy and improving internal communication.
+{% else %}
+Criar uma experiência digital simples, rápida e acessível para todos os colaboradores, reduzindo burocracia e melhorando a comunicação interna.
+{% endif %}
 </p>
 
 </div>
 
+<!-- DESENVOLVEDOR -->
+<div class="section">
+
+<h2>
+{% if session.get("lang") == "en" %}
+Developer
+{% else %}
+Desenvolvedor
+{% endif %}
+</h2>
+
+<p>
+<span class="label">
+{% if session.get("lang") == "en" %}Name{% else %}Nome{% endif %}:
+</span>
+Firmino Salão Savel
+</p>
+
+<p>
+<span class="label">
+{% if session.get("lang") == "en" %}Contact{% else %}Contactos{% endif %}:
+</span>
++258 879 131 089 / +258 844 681 767
+</p>
+
+<p>
+<span class="label">Email:</span><br>
+Corporate: firmino.savel@unitrans.co.za<br>
+Personal: firminosavel@gmail.com
+</p>
+
+</div>
+
+<!-- APOIO ESTRATÉGICO -->
+<div class="section">
+
+<h2>
+{% if session.get("lang") == "en" %}
+Strategic Support
+{% else %}
+Apoio Estratégico
+{% endif %}
+</h2>
+
+<p>
+Chris Ford<br>
+Business Development Manager
+</p>
+
+</div>
+
+<!-- LOCALIZAÇÃO -->
+<div class="section">
+
+<h2>
+{% if session.get("lang") == "en" %}
+Location
+{% else %}
+Localização
+{% endif %}
+</h2>
+
+<p>
+Xinavane, Mozambique
+</p>
+
+<p>
+<a class="map-link" href="https://share.google/Z619uochaeZZQGzx0" target="_blank">
+{% if session.get("lang") == "en" %}
+View on Google Maps
+{% else %}
+Ver no Google Maps
+{% endif %}
+</a>
+</p>
+
+</div>
+
+<a href="/menu" class="button">
+{% if session.get("lang") == "en" %}
+Back to Menu
+{% else %}
+Voltar ao Menu
+{% endif %}
+</a>
+
+</div>
 </div>
 
 </body>
