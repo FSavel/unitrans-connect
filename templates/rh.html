@@ -8,7 +8,7 @@
 
 <style>
 body{
-    font-family: Arial, sans-serif;
+    font-family:Arial,sans-serif;
     background:#f4f6f8;
     margin:0;
 }
@@ -21,7 +21,7 @@ body{
 
 .card{
     background:white;
-    padding:20px;
+    padding:25px;
     border-radius:12px;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
@@ -31,16 +31,10 @@ h2{
     color:#0d4d2c;
 }
 
-p{
-    text-align:center;
-    color:#555;
-}
-
 label{
-    font-weight:bold;
-    color:#0d4d2c;
     display:block;
-    margin-top:10px;
+    margin-top:12px;
+    font-weight:bold;
 }
 
 select, textarea, button{
@@ -49,11 +43,10 @@ select, textarea, button{
     margin-top:8px;
     border-radius:6px;
     border:1px solid #ccc;
-    font-size:14px;
 }
 
 textarea{
-    height:120px;
+    height:130px;
     resize:none;
 }
 
@@ -62,7 +55,6 @@ button{
     color:white;
     border:none;
     cursor:pointer;
-    margin-top:15px;
 }
 
 button:hover{
@@ -71,13 +63,42 @@ button:hover{
 
 .back{
     display:block;
-    margin-top:20px;
+    margin-top:15px;
     text-align:center;
     background:#0d4d2c;
     color:white;
     padding:10px;
     border-radius:8px;
     text-decoration:none;
+}
+
+/* popup */
+.popup{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.55);
+}
+
+.popup-box{
+    background:white;
+    width:90%;
+    max-width:420px;
+    margin:120px auto;
+    padding:25px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.popup-box h3{
+    margin-top:0;
+}
+
+.popup-box button{
+    margin-top:10px;
 }
 </style>
 </head>
@@ -91,8 +112,6 @@ button:hover{
 
 <p>{{ t.rh_text }}</p>
 
-<form>
-
 <label>
 {% if session["lang"] == "en" %}
 Message Type
@@ -101,22 +120,12 @@ Tipo de Mensagem
 {% endif %}
 </label>
 
-<select>
-<option>
-{% if session["lang"] == "en" %}Suggestion{% else %}Sugestão{% endif %}
-</option>
-
-<option>
-{% if session["lang"] == "en" %}Complaint{% else %}Reclamação{% endif %}
-</option>
-
-<option>
-{% if session["lang"] == "en" %}HR Request{% else %}Pedido RH{% endif %}
-</option>
-
-<option>
-{% if session["lang"] == "en" %}Technical Issue{% else %}Problema Técnico{% endif %}
-</option>
+<select id="tipo">
+<option value="">--</option>
+<option>Sugestão / Suggestion</option>
+<option>Reclamação / Complaint</option>
+<option>Falha Técnica / Technical Issue</option>
+<option>Pedido RH / HR Request</option>
 </select>
 
 <label>
@@ -127,21 +136,13 @@ Mensagem
 {% endif %}
 </label>
 
-<textarea placeholder="
-{% if session['lang'] == 'en' %}
-Write your message here...
-{% else %}
-Escreva sua mensagem aqui...
-{% endif %}
-"></textarea>
+<textarea id="mensagem"></textarea>
 
-<button type="button">
+<button onclick="abrirPopup()">
 {{ t.send }}
 </button>
 
-</form>
-
-<a class="back" href="/menu">
+<a href="/menu" class="back">
 {% if session["lang"] == "en" %}
 Back to Menu
 {% else %}
@@ -151,6 +152,74 @@ Voltar ao Menu
 
 </div>
 </div>
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+<div class="popup-box">
+
+<h3>
+{% if session["lang"] == "en" %}
+Confirm submission?
+{% else %}
+Tem a certeza que quer enviar esta mensagem agora?
+{% endif %}
+</h3>
+
+<button onclick="confirmar()">
+{% if session["lang"] == "en" %}
+Confirm
+{% else %}
+Confirmar
+{% endif %}
+</button>
+
+<button onclick="fecharPopup()">
+{% if session["lang"] == "en" %}
+Edit
+{% else %}
+Editar
+{% endif %}
+</button>
+
+<button onclick="cancelarTudo()">
+{% if session["lang"] == "en" %}
+Cancel
+{% else %}
+Cancelar
+{% endif %}
+</button>
+
+</div>
+</div>
+
+<script>
+function abrirPopup(){
+    let tipo = document.getElementById("tipo").value;
+    let msg = document.getElementById("mensagem").value.trim();
+
+    if(tipo == "" || msg == ""){
+        alert("Preencha todos os campos.");
+        return;
+    }
+
+    document.getElementById("popup").style.display="block";
+}
+
+function fecharPopup(){
+    document.getElementById("popup").style.display="none";
+}
+
+function confirmar(){
+    alert("Mensagem enviada com sucesso.");
+    cancelarTudo();
+}
+
+function cancelarTudo(){
+    document.getElementById("tipo").selectedIndex = 0;
+    document.getElementById("mensagem").value = "";
+    document.getElementById("popup").style.display="none";
+}
+</script>
 
 </body>
 </html>
