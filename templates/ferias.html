@@ -1,16 +1,22 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="{{ session['lang'] if session.get('lang') else 'pt' }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>{{ t.leave_title }}</title>
+<title>
+{% if session.get("lang") == "en" %}
+Leave & Absences
+{% else %}
+Férias e Faltas
+{% endif %}
+</title>
 
 <style>
 body{
+    margin:0;
     font-family:Arial, sans-serif;
     background:#f4f6f8;
-    margin:0;
 }
 
 .container{
@@ -21,19 +27,21 @@ body{
 
 .card{
     background:white;
-    padding:25px;
     border-radius:12px;
+    padding:25px;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 
-h2{
+h1{
     text-align:center;
     color:#0d4d2c;
+    margin-bottom:20px;
 }
 
 .info{
-    padding:10px 0;
-    border-bottom:1px solid #ddd;
+    padding:12px;
+    border-bottom:1px solid #eee;
+    font-size:16px;
 }
 
 .label{
@@ -43,24 +51,32 @@ h2{
 
 .section{
     margin-top:25px;
-    background:#f9f9f9;
-    padding:18px;
-    border-radius:10px;
 }
 
-input, button{
+h2{
+    color:#0d4d2c;
+    font-size:20px;
+}
+
+input{
     width:100%;
     padding:10px;
     margin-top:8px;
-    border-radius:6px;
+    margin-bottom:12px;
     border:1px solid #ccc;
+    border-radius:8px;
+    box-sizing:border-box;
 }
 
 button{
+    width:100%;
+    padding:12px;
     background:#0d4d2c;
     color:white;
     border:none;
+    border-radius:8px;
     cursor:pointer;
+    font-size:16px;
 }
 
 button:hover{
@@ -72,36 +88,37 @@ button:disabled{
     cursor:not-allowed;
 }
 
-#dias{
-    margin-top:12px;
-    font-weight:bold;
+.notice{
+    margin-top:25px;
+    background:#fff8e1;
+    padding:18px;
+    border-left:5px solid #f0ad4e;
+    border-radius:8px;
+    font-size:15px;
+    line-height:1.6;
 }
 
-#erro{
-    margin-top:8px;
+.red{
     color:red;
     font-weight:bold;
+    margin-top:10px;
 }
 
-.notice{
-    background:#fff7e6;
-    padding:15px;
-    border-left:5px solid #f0ad4e;
-    margin-top:20px;
-    border-radius:8px;
-    white-space:pre-line;
-    font-size:14px;
+.green{
+    color:green;
+    font-weight:bold;
+    margin-top:10px;
 }
 
 .back{
     display:block;
-    margin-top:20px;
+    margin-top:25px;
     text-align:center;
     background:#0d4d2c;
     color:white;
-    padding:10px;
-    border-radius:8px;
     text-decoration:none;
+    padding:12px;
+    border-radius:8px;
 }
 </style>
 </head>
@@ -111,62 +128,115 @@ button:disabled{
 <div class="container">
 <div class="card">
 
-<h2>{{ t.leave_title }}</h2>
+<h1>
+{% if session.get("lang") == "en" %}
+Leave & Absences
+{% else %}
+Férias e Faltas
+{% endif %}
+</h1>
 
-<div class="info"><span class="label">{{ t.name }}:</span> {{ user["Nome"] }}</div>
-<div class="info"><span class="label">{{ t.employee_number }}:</span> {{ user["Numero do trabalhador"] }}</div>
-<div class="info"><span class="label">{{ t.leave_balance }}:</span> <span id="saldo">{{ user["Ferias"] }}</span></div>
-<div class="info"><span class="label">{{ t.absences }}:</span> {{ user["Faltas"] }}</div>
+<div class="info">
+<span class="label">
+{% if session.get("lang") == "en" %}Name{% else %}Nome{% endif %}:
+</span>
+{{ user["Nome"] }}
+</div>
 
+<div class="info">
+<span class="label">
+{% if session.get("lang") == "en" %}Employee Number{% else %}Número do Trabalhador{% endif %}:
+</span>
+{{ user["Numero do trabalhador"] }}
+</div>
+
+<div class="info">
+<span class="label">
+{% if session.get("lang") == "en" %}Leave Balance{% else %}Saldo de Férias{% endif %}:
+</span>
+<span id="saldo">{{ user["Ferias"] }}</span>
+</div>
+
+<div class="info">
+<span class="label">
+{% if session.get("lang") == "en" %}Absences{% else %}Faltas{% endif %}:
+</span>
+{{ user["Faltas"] }}
+</div>
+
+<!-- PEDIDO -->
 <div class="section">
 
-<h3>
-{% if session["lang"] == "en" %}
+<h2>
+{% if session.get("lang") == "en" %}
 Request Leave
 {% else %}
 Solicitar Férias
 {% endif %}
-</h3>
+</h2>
 
-<label>{{ t.start_date }}</label>
-<input type="date" id="start">
+<label>
+{% if session.get("lang") == "en" %}
+Start Date
+{% else %}
+Data de Início
+{% endif %}
+</label>
+<input type="date" id="inicio">
 
-<label>{{ t.end_date }}</label>
-<input type="date" id="end">
+<label>
+{% if session.get("lang") == "en" %}
+End Date
+{% else %}
+Data de Fim
+{% endif %}
+</label>
+<input type="date" id="fim">
 
-<p id="dias"></p>
-<p id="erro"></p>
+<div id="resultado"></div>
 
-<button id="btnEnviar" onclick="enviarPedido()">
-{{ t.submit_request }}
+<button id="btnEnviar">
+{% if session.get("lang") == "en" %}
+Submit Request
+{% else %}
+Enviar Pedido
+{% endif %}
 </button>
 
 </div>
 
+<!-- AVISO -->
 <div class="notice">
-{% if session["lang"] == "en" %}
+
+<strong>
+{% if session.get("lang") == "en" %}
 📌 Absence Justification
-
-Dear employee, please justify your absences within 3 working days by submitting the following documents to HR:
-
-- Medical certificate
-- Death certificate + local declaration
-- Marriage certificate where applicable
-- Other documents as guided by HR
 {% else %}
 📌 Justificação de Faltas
-
-Caro colaborador, justifique as suas faltas no prazo máximo de 3 dias úteis, entregando ao RH os seguintes documentos:
-
-- Atestado médico
-- Certidão de óbito + declaração do bairro
-- Certidão de casamento, quando aplicável
-- Outros, conforme orientação do RH
 {% endif %}
+</strong>
+<br><br>
+
+{% if session.get("lang") == "en" %}
+Dear employee, please justify your absences within 3 working days by submitting the following documents to HR:
+<br><br>
+- Medical certificate, in case of illness;<br>
+- Death certificate + local authority declaration;<br>
+- Marriage certificate, when applicable;<br>
+- Others, according to HR guidance.
+{% else %}
+Caro colaborador, justifique as suas faltas no prazo máximo de 3 dias úteis, entregando ao RH os seguintes documentos:
+<br><br>
+- Atestado médico, em caso de doença;<br>
+- Certidão de óbito + declaração do bairro;<br>
+- Certidão de casamento, quando aplicável;<br>
+- Outros, conforme orientação do RH.
+{% endif %}
+
 </div>
 
 <a href="/menu" class="back">
-{% if session["lang"] == "en" %}
+{% if session.get("lang") == "en" %}
 Back to Menu
 {% else %}
 Voltar ao Menu
@@ -177,46 +247,68 @@ Voltar ao Menu
 </div>
 
 <script>
-function calcularDias(){
-    let start = new Date(document.getElementById("start").value);
-    let end = new Date(document.getElementById("end").value);
+function calcularDias() {
+
+    let inicio = document.getElementById("inicio").value;
+    let fim = document.getElementById("fim").value;
     let saldo = parseInt(document.getElementById("saldo").innerText) || 0;
+    let resultado = document.getElementById("resultado");
+    let btn = document.getElementById("btnEnviar");
 
-    let diasTxt = document.getElementById("dias");
-    let erroTxt = document.getElementById("erro");
-    let botao = document.getElementById("btnEnviar");
+    resultado.innerHTML = "";
+    btn.disabled = false;
 
-    diasTxt.innerHTML = "";
-    erroTxt.innerHTML = "";
-    botao.disabled = false;
+    if(inicio && fim){
 
-    if(document.getElementById("start").value && document.getElementById("end").value){
+        let d1 = new Date(inicio);
+        let d2 = new Date(fim);
 
-        if(end >= start){
+        if(d2 < d1){
+            resultado.innerHTML = "<p class='red'>Datas inválidas.</p>";
+            btn.disabled = true;
+            return;
+        }
 
-            let diff = end - start;
-            let dias = (diff / (1000*60*60*24)) + 1;
+        let diff = d2 - d1;
+        let dias = Math.floor(diff / (1000*60*60*24)) + 1;
 
-            diasTxt.innerHTML = "Total Days: " + dias;
+        if(dias > saldo){
 
-            if(dias > saldo){
-                erroTxt.innerHTML = "Saldo insuficiente. Verifique e ajuste o pedido.";
-                botao.disabled = true;
-            }
+            {% if session.get("lang") == "en" %}
+            resultado.innerHTML =
+            "<p class='red'>Insufficient balance. Please review and adjust your request.</p>";
+            {% else %}
+            resultado.innerHTML =
+            "<p class='red'>Saldo insuficiente. Verifique e ajuste o pedido.</p>";
+            {% endif %}
+
+            btn.disabled = true;
 
         }else{
-            erroTxt.innerHTML = "Datas inválidas.";
-            botao.disabled = true;
+
+            {% if session.get("lang") == "en" %}
+            resultado.innerHTML =
+            "<p class='green'>Total Days: "+dias+"</p>";
+            {% else %}
+            resultado.innerHTML =
+            "<p class='green'>Total de Dias: "+dias+"</p>";
+            {% endif %}
         }
     }
 }
 
-function enviarPedido(){
-    alert("Pedido enviado com sucesso.");
-}
+document.getElementById("inicio").addEventListener("change", calcularDias);
+document.getElementById("fim").addEventListener("change", calcularDias);
 
-document.getElementById("start").addEventListener("change", calcularDias);
-document.getElementById("end").addEventListener("change", calcularDias);
+document.getElementById("btnEnviar").addEventListener("click", function(){
+
+{% if session.get("lang") == "en" %}
+alert("Leave request submitted successfully.");
+{% else %}
+alert("Pedido de férias enviado com sucesso.");
+{% endif %}
+
+});
 </script>
 
 </body>
