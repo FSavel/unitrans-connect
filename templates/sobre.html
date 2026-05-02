@@ -1,121 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sobre nós</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Unitrans Connect</title>
 
 <style>
 body{
-    font-family:Arial;
-    background:#f4f4f4;
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:url("/static/fundo.jpg") no-repeat center center fixed;
+    background-size:cover;
+}
+
+.overlay{
+    min-height:100vh;
+    background:rgba(0,0,0,0.55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
     padding:20px;
 }
 
-.box{
+.card{
     background:white;
-    padding:25px;
-    border-radius:15px;
-    max-width:800px;
-    margin:auto;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
+    padding:30px;
+    border-radius:14px;
+    text-align:center;
+    width:100%;
+    max-width:420px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.25);
 }
 
-h2, h3{
+.logo{
+    width:90px;
+    margin-bottom:15px;
+}
+
+h1{
     color:#0d4d2c;
+    margin-bottom:25px;
 }
 
-.section{
-    margin-bottom:20px;
+button{
+    width:100%;
+    padding:14px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    background:#0d4d2c;
+    color:white;
 }
 
-.en{
-    color:#555;
-    font-style:italic;
-    margin-top:3px;
+button:hover{
+    background:#14683c;
 }
 
-hr{
-    margin:20px 0;
+.secondary{
+    background:#444;
 }
 
-a{
-    color:#0d4d2c;
-    text-decoration:none;
+.secondary:hover{
+    background:#222;
+}
+
+.small-text{
+    margin-top:15px;
+    font-size:13px;
+    color:#ddd;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="overlay">
 
-<h2>ℹ️ Sobre o Unitrans Connect</h2>
+<div class="card">
 
-<div class="section">
-<p>
-Unitrans Connect é uma plataforma digital desenvolvida para facilitar o acesso dos colaboradores da Unitrans a informações internas, serviços de recursos humanos e comunicação organizacional através de QR Code.
-</p>
+<img src="/static/logo.png" class="logo">
 
-<p class="en">
-Unitrans Connect is a digital platform developed to facilitate employees’ access to internal information, HR services and organizational communication through QR Code.
-</p>
-</div>
+<h1>
+Unitrans Connect
+</h1>
 
-<hr>
-
-<div class="section">
-<h3>👨‍💻 Desenvolvedor / Developer</h3>
-
-<p>Nome / Name: Firmino Salão Savel</p>
-</div>
-
-<hr>
-
-<div class="section">
-<h3>📞 Contactos / Contacts</h3>
-
-<p>+258 879 131 089</p>
-<p>+258 844 681 767</p>
-</div>
-
-<hr>
-
-<div class="section">
-<h3>📧 Emails</h3>
-
-<p>Corporativo / Corporate: firmino.savel@unitrans.co.za</p>
-
-<p>Pessoal / Personal: firminosavel@gmail.com</p>
-</div>
-
-<hr>
-
-<div class="section">
-<h3>📍 Localização / Location</h3>
-
-<p>Xinavane, Moçambique</p>
-<p class="en">Xinavane, Mozambique</p>
-
-<p>
-<a href="https://maps.app.goo.gl/vSaghnB4kuckW8Pj9" target="_blank">
-Ver no Google Maps / View on Google Maps
+<!-- BOTÃO SOBRE -->
+<a href="/sobre" style="text-decoration:none;">
+    <button class="secondary">
+        Sobre Nós / About Us
+    </button>
 </a>
+
+<!-- SELEÇÃO DE IDIOMA -->
+<a href="/idioma/pt" style="text-decoration:none;">
+    <button>
+        Português
+    </button>
+</a>
+
+<a href="/idioma/en" style="text-decoration:none;">
+    <button>
+        English
+    </button>
+</a>
+
+<p class="small-text">
+Seleccione o idioma / Select language
 </p>
-</div>
 
-<hr>
-
-<div class="section">
-<h3>💡 Visão do projecto / Project vision</h3>
-
-<p>
-Criar uma experiência digital simples, rápida e acessível para todos os colaboradores, reduzindo burocracia e melhorando a comunicação interna.
-</p>
-
-<p class="en">
-Create a simple, fast and accessible digital experience for all employees, reducing bureaucracy and improving internal communication.
-</p>
 </div>
 
 </div>
