@@ -1,57 +1,202 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Férias</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ t.leave_title }}</title>
 
 <style>
 body{
-font-family:Arial;
-padding:20px;
-background:#f2f2f2;
+    font-family: Arial, sans-serif;
+    background:#f4f6f8;
+    margin:0;
 }
 
-.box{
-background:white;
-padding:25px;
-border-radius:15px;
+.container{
+    max-width:800px;
+    margin:auto;
+    padding:20px;
 }
 
-input,button{
-width:100%;
-padding:12px;
-margin:10px 0;
-border-radius:10px;
-border:1px solid #ccc;
+.card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+h2{
+    text-align:center;
+    color:#0d4d2c;
+}
+
+.info{
+    margin:15px 0;
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+
+.label{
+    font-weight:bold;
+    color:#0d4d2c;
+}
+
+.section{
+    margin-top:25px;
+    padding:15px;
+    background:#f9f9f9;
+    border-radius:10px;
+}
+
+input, button{
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+    border-radius:6px;
+    border:1px solid #ccc;
 }
 
 button{
-background:#0d4d2c;
-color:white;
-border:none;
+    background:#0d4d2c;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#14683c;
+}
+
+.notice{
+    background:#fff7e6;
+    padding:15px;
+    border-left:5px solid #f0ad4e;
+    margin-top:20px;
+    border-radius:8px;
+    font-size:14px;
+    white-space:pre-line;
+}
+
+.back{
+    display:block;
+    margin-top:20px;
+    text-align:center;
+    background:#0d4d2c;
+    color:white;
+    padding:10px;
+    border-radius:8px;
+    text-decoration:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
+<div class="card">
 
-<h2>Férias e Faltas</h2>
+<h2>{{ t.leave_title }}</h2>
 
-<p><b>Nome:</b> {{ user["Nome"] }}</p>
-<p><b>Férias:</b> {{ user["Ferias"] }}</p>
-<p><b>Faltas:</b> {{ user["Faltas"] }}</p>
+<!-- INFO TRABALHADOR -->
+<div class="info">
+<span class="label">{{ t.name }}:</span> {{ user["Nome"] }}
+</div>
 
-<h3>Solicitar Férias</h3>
+<div class="info">
+<span class="label">{{ t.employee_number }}:</span> {{ user["Numero do trabalhador"] }}
+</div>
 
-<input type="date">
-<input type="date">
+<div class="info">
+<span class="label">{{ t.leave_balance }}:</span> {{ user["Ferias"] }}
+</div>
 
-<button>Enviar Pedido</button>
+<div class="info">
+<span class="label">{{ t.absences }}:</span> {{ user["Faltas"] }}
+</div>
+
+<!-- FORMULÁRIO -->
+<div class="section">
+
+<h3>
+{% if session["lang"] == "en" %}
+Request Leave
+{% else %}
+Solicitar Férias
+{% endif %}
+</h3>
+
+<label>{{ t.start_date }}</label>
+<input type="date" id="start">
+
+<label>{{ t.end_date }}</label>
+<input type="date" id="end">
+
+<p id="dias"></p>
+
+<button onclick="calcular()">
+{{ t.submit_request }}
+</button>
 
 </div>
+
+<!-- JUSTIFICAÇÃO DE FALTAS -->
+<div class="notice">
+
+{% if session["lang"] == "en" %}
+
+📌 Absence Justification
+
+Dear employee, please justify your absences within 3 working days by submitting the following documents to HR:
+
+- Medical certificate (in case of illness)
+- Death certificate + local authority declaration
+- Marriage certificate, where applicable
+- Other documents as guided by HR
+
+{% else %}
+
+📌 Justificação de Faltas
+
+Caro colaborador, justifique as suas faltas no prazo máximo de 3 dias úteis, entregando ao RH os seguintes documentos:
+
+- Atestado médico, em caso de doença
+- Certidão de óbito + declaração do bairro
+- Certidão de casamento, quando aplicável
+- Outros documentos, conforme orientação do RH
+
+{% endif %}
+
+</div>
+
+<a class="back" href="/menu">
+{% if session["lang"] == "en" %}
+Back to Menu
+{% else %}
+Voltar ao Menu
+{% endif %}
+</a>
+
+</div>
+</div>
+
+<script>
+function calcular(){
+    let start = new Date(document.getElementById("start").value);
+    let end = new Date(document.getElementById("end").value);
+
+    if(start && end && end >= start){
+        let diff = end - start;
+        let days = diff / (1000 * 60 * 60 * 24) + 1;
+
+        document.getElementById("dias").innerHTML =
+            "Total Days: " + days;
+    } else {
+        document.getElementById("dias").innerHTML =
+            "Invalid dates";
+    }
+}
+</script>
 
 </body>
 </html>
