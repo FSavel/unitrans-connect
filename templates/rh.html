@@ -1,59 +1,80 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="{{ session['lang'] if session.get('lang') else 'pt' }}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>{{ t.rh_title }}</title>
+<title>
+{% if session.get("lang") == "en" %}
+Contact HR
+{% else %}
+Contactar RH
+{% endif %}
+</title>
 
 <style>
 body{
-    font-family:Arial,sans-serif;
-    background:#f4f6f8;
     margin:0;
+    font-family:Arial, sans-serif;
+    background:#f4f6f8;
 }
 
 .container{
-    max-width:700px;
+    max-width:800px;
     margin:auto;
     padding:20px;
 }
 
 .card{
     background:white;
-    padding:25px;
     border-radius:12px;
+    padding:25px;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 
-h2{
+h1{
     text-align:center;
     color:#0d4d2c;
+    margin-bottom:10px;
+}
+
+.sub{
+    text-align:center;
+    color:#555;
+    margin-bottom:25px;
 }
 
 label{
     display:block;
-    margin-top:12px;
+    margin-top:15px;
+    margin-bottom:6px;
     font-weight:bold;
+    color:#0d4d2c;
 }
 
-select, textarea, button{
+select, textarea{
     width:100%;
-    padding:10px;
-    margin-top:8px;
-    border-radius:6px;
+    padding:12px;
     border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+    box-sizing:border-box;
 }
 
 textarea{
-    height:130px;
-    resize:none;
+    min-height:150px;
+    resize:vertical;
 }
 
 button{
+    width:100%;
+    margin-top:18px;
+    padding:12px;
     background:#0d4d2c;
     color:white;
     border:none;
+    border-radius:8px;
+    font-size:16px;
     cursor:pointer;
 }
 
@@ -63,41 +84,42 @@ button:hover{
 
 .back{
     display:block;
-    margin-top:15px;
+    margin-top:20px;
     text-align:center;
     background:#0d4d2c;
     color:white;
-    padding:10px;
-    border-radius:8px;
     text-decoration:none;
+    padding:12px;
+    border-radius:8px;
 }
 
-/* popup */
-.popup{
+/* modal */
+.modal{
     display:none;
     position:fixed;
-    top:0;
+    z-index:999;
     left:0;
+    top:0;
     width:100%;
     height:100%;
-    background:rgba(0,0,0,0.55);
+    background:rgba(0,0,0,0.5);
 }
 
-.popup-box{
+.modal-box{
     background:white;
     width:90%;
-    max-width:420px;
+    max-width:450px;
     margin:120px auto;
     padding:25px;
     border-radius:12px;
     text-align:center;
 }
 
-.popup-box h3{
-    margin-top:0;
+.modal-box p{
+    margin-bottom:20px;
 }
 
-.popup-box button{
+.modal-actions button{
     margin-top:10px;
 }
 </style>
@@ -108,12 +130,24 @@ button:hover{
 <div class="container">
 <div class="card">
 
-<h2>{{ t.rh_title }}</h2>
+<h1>
+{% if session.get("lang") == "en" %}
+Contact HR
+{% else %}
+Contactar RH
+{% endif %}
+</h1>
 
-<p>{{ t.rh_text }}</p>
+<p class="sub">
+{% if session.get("lang") == "en" %}
+We are available to support you.
+{% else %}
+Estamos disponíveis para apoiar.
+{% endif %}
+</p>
 
 <label>
-{% if session["lang"] == "en" %}
+{% if session.get("lang") == "en" %}
 Message Type
 {% else %}
 Tipo de Mensagem
@@ -121,29 +155,53 @@ Tipo de Mensagem
 </label>
 
 <select id="tipo">
-<option value="">--</option>
-<option>Sugestão / Suggestion</option>
-<option>Reclamação / Complaint</option>
-<option>Falha Técnica / Technical Issue</option>
-<option>Pedido RH / HR Request</option>
+
+<option value="">
+{% if session.get("lang") == "en" %}
+Select...
+{% else %}
+Selecionar...
+{% endif %}
+</option>
+
+{% if session.get("lang") == "en" %}
+
+<option>Suggestion</option>
+<option>Complaint</option>
+<option>Technical Issue</option>
+<option>HR Request</option>
+
+{% else %}
+
+<option>Sugestão</option>
+<option>Reclamação</option>
+<option>Falha Técnica</option>
+<option>Pedido RH</option>
+
+{% endif %}
+
 </select>
 
 <label>
-{% if session["lang"] == "en" %}
+{% if session.get("lang") == "en" %}
 Message
 {% else %}
 Mensagem
 {% endif %}
 </label>
 
-<textarea id="mensagem"></textarea>
+<textarea id="mensagem" placeholder="{% if session.get('lang') == 'en' %}Write your message here...{% else %}Escreva a sua mensagem aqui...{% endif %}"></textarea>
 
-<button onclick="abrirPopup()">
-{{ t.send }}
+<button onclick="abrirModal()">
+{% if session.get("lang") == "en" %}
+Send
+{% else %}
+Enviar
+{% endif %}
 </button>
 
 <a href="/menu" class="back">
-{% if session["lang"] == "en" %}
+{% if session.get("lang") == "en" %}
 Back to Menu
 {% else %}
 Voltar ao Menu
@@ -153,71 +211,87 @@ Voltar ao Menu
 </div>
 </div>
 
-<!-- POPUP -->
-<div class="popup" id="popup">
-<div class="popup-box">
+<!-- MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-box">
 
-<h3>
-{% if session["lang"] == "en" %}
-Confirm submission?
-{% else %}
-Tem a certeza que quer enviar esta mensagem agora?
-{% endif %}
-</h3>
+        <p>
+        {% if session.get("lang") == "en" %}
+        Are you sure you want to send this message now?
+        {% else %}
+        Tem a certeza que quer enviar esta mensagem assim como está, agora?
+        {% endif %}
+        </p>
 
-<button onclick="confirmar()">
-{% if session["lang"] == "en" %}
-Confirm
-{% else %}
-Confirmar
-{% endif %}
-</button>
+        <div class="modal-actions">
 
-<button onclick="fecharPopup()">
-{% if session["lang"] == "en" %}
-Edit
-{% else %}
-Editar
-{% endif %}
-</button>
+            <button onclick="confirmarEnvio()">
+            {% if session.get("lang") == "en" %}
+            Confirm
+            {% else %}
+            Confirmar
+            {% endif %}
+            </button>
 
-<button onclick="cancelarTudo()">
-{% if session["lang"] == "en" %}
-Cancel
-{% else %}
-Cancelar
-{% endif %}
-</button>
+            <button onclick="fecharModal()">
+            {% if session.get("lang") == "en" %}
+            Edit
+            {% else %}
+            Editar
+            {% endif %}
+            </button>
 
-</div>
+            <button onclick="cancelarTudo()">
+            {% if session.get("lang") == "en" %}
+            Cancel
+            {% else %}
+            Cancelar
+            {% endif %}
+            </button>
+
+        </div>
+
+    </div>
 </div>
 
 <script>
-function abrirPopup(){
+function abrirModal(){
+
     let tipo = document.getElementById("tipo").value;
     let msg = document.getElementById("mensagem").value.trim();
 
-    if(tipo == "" || msg == ""){
+    if(tipo === "" || msg === ""){
+        {% if session.get("lang") == "en" %}
+        alert("Please complete all fields.");
+        {% else %}
         alert("Preencha todos os campos.");
+        {% endif %}
         return;
     }
 
-    document.getElementById("popup").style.display="block";
+    document.getElementById("modal").style.display="block";
 }
 
-function fecharPopup(){
-    document.getElementById("popup").style.display="none";
+function fecharModal(){
+    document.getElementById("modal").style.display="none";
 }
 
-function confirmar(){
+function confirmarEnvio(){
+
+    {% if session.get("lang") == "en" %}
+    alert("Message sent successfully.");
+    {% else %}
     alert("Mensagem enviada com sucesso.");
+    {% endif %}
+
     cancelarTudo();
 }
 
 function cancelarTudo(){
+
     document.getElementById("tipo").selectedIndex = 0;
     document.getElementById("mensagem").value = "";
-    document.getElementById("popup").style.display="none";
+    document.getElementById("modal").style.display="none";
 }
 </script>
 
