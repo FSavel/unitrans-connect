@@ -8,7 +8,7 @@
 
 <style>
 body{
-    font-family: Arial, sans-serif;
+    font-family:Arial, sans-serif;
     background:#f4f6f8;
     margin:0;
 }
@@ -21,7 +21,7 @@ body{
 
 .card{
     background:white;
-    padding:20px;
+    padding:25px;
     border-radius:12px;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
@@ -32,8 +32,7 @@ h2{
 }
 
 .info{
-    margin:15px 0;
-    padding:10px;
+    padding:10px 0;
     border-bottom:1px solid #ddd;
 }
 
@@ -44,8 +43,8 @@ h2{
 
 .section{
     margin-top:25px;
-    padding:15px;
     background:#f9f9f9;
+    padding:18px;
     border-radius:10px;
 }
 
@@ -68,14 +67,30 @@ button:hover{
     background:#14683c;
 }
 
+button:disabled{
+    background:#999;
+    cursor:not-allowed;
+}
+
+#dias{
+    margin-top:12px;
+    font-weight:bold;
+}
+
+#erro{
+    margin-top:8px;
+    color:red;
+    font-weight:bold;
+}
+
 .notice{
     background:#fff7e6;
     padding:15px;
     border-left:5px solid #f0ad4e;
     margin-top:20px;
     border-radius:8px;
-    font-size:14px;
     white-space:pre-line;
+    font-size:14px;
 }
 
 .back{
@@ -98,24 +113,11 @@ button:hover{
 
 <h2>{{ t.leave_title }}</h2>
 
-<!-- INFO TRABALHADOR -->
-<div class="info">
-<span class="label">{{ t.name }}:</span> {{ user["Nome"] }}
-</div>
+<div class="info"><span class="label">{{ t.name }}:</span> {{ user["Nome"] }}</div>
+<div class="info"><span class="label">{{ t.employee_number }}:</span> {{ user["Numero do trabalhador"] }}</div>
+<div class="info"><span class="label">{{ t.leave_balance }}:</span> <span id="saldo">{{ user["Ferias"] }}</span></div>
+<div class="info"><span class="label">{{ t.absences }}:</span> {{ user["Faltas"] }}</div>
 
-<div class="info">
-<span class="label">{{ t.employee_number }}:</span> {{ user["Numero do trabalhador"] }}
-</div>
-
-<div class="info">
-<span class="label">{{ t.leave_balance }}:</span> {{ user["Ferias"] }}
-</div>
-
-<div class="info">
-<span class="label">{{ t.absences }}:</span> {{ user["Faltas"] }}
-</div>
-
-<!-- FORMULÁRIO -->
 <div class="section">
 
 <h3>
@@ -133,43 +135,37 @@ Solicitar Férias
 <input type="date" id="end">
 
 <p id="dias"></p>
+<p id="erro"></p>
 
-<button onclick="calcular()">
+<button id="btnEnviar" onclick="enviarPedido()">
 {{ t.submit_request }}
 </button>
 
 </div>
 
-<!-- JUSTIFICAÇÃO DE FALTAS -->
 <div class="notice">
-
 {% if session["lang"] == "en" %}
-
 📌 Absence Justification
 
 Dear employee, please justify your absences within 3 working days by submitting the following documents to HR:
 
-- Medical certificate (in case of illness)
-- Death certificate + local authority declaration
-- Marriage certificate, where applicable
+- Medical certificate
+- Death certificate + local declaration
+- Marriage certificate where applicable
 - Other documents as guided by HR
-
 {% else %}
-
 📌 Justificação de Faltas
 
 Caro colaborador, justifique as suas faltas no prazo máximo de 3 dias úteis, entregando ao RH os seguintes documentos:
 
-- Atestado médico, em caso de doença
+- Atestado médico
 - Certidão de óbito + declaração do bairro
 - Certidão de casamento, quando aplicável
-- Outros documentos, conforme orientação do RH
-
+- Outros, conforme orientação do RH
 {% endif %}
-
 </div>
 
-<a class="back" href="/menu">
+<a href="/menu" class="back">
 {% if session["lang"] == "en" %}
 Back to Menu
 {% else %}
@@ -181,21 +177,46 @@ Voltar ao Menu
 </div>
 
 <script>
-function calcular(){
+function calcularDias(){
     let start = new Date(document.getElementById("start").value);
     let end = new Date(document.getElementById("end").value);
+    let saldo = parseInt(document.getElementById("saldo").innerText) || 0;
 
-    if(start && end && end >= start){
-        let diff = end - start;
-        let days = diff / (1000 * 60 * 60 * 24) + 1;
+    let diasTxt = document.getElementById("dias");
+    let erroTxt = document.getElementById("erro");
+    let botao = document.getElementById("btnEnviar");
 
-        document.getElementById("dias").innerHTML =
-            "Total Days: " + days;
-    } else {
-        document.getElementById("dias").innerHTML =
-            "Invalid dates";
+    diasTxt.innerHTML = "";
+    erroTxt.innerHTML = "";
+    botao.disabled = false;
+
+    if(document.getElementById("start").value && document.getElementById("end").value){
+
+        if(end >= start){
+
+            let diff = end - start;
+            let dias = (diff / (1000*60*60*24)) + 1;
+
+            diasTxt.innerHTML = "Total Days: " + dias;
+
+            if(dias > saldo){
+                erroTxt.innerHTML = "Saldo insuficiente. Verifique e ajuste o pedido.";
+                botao.disabled = true;
+            }
+
+        }else{
+            erroTxt.innerHTML = "Datas inválidas.";
+            botao.disabled = true;
+        }
     }
 }
+
+function enviarPedido(){
+    alert("Pedido enviado com sucesso.");
+}
+
+document.getElementById("start").addEventListener("change", calcularDias);
+document.getElementById("end").addEventListener("change", calcularDias);
 </script>
 
 </body>
