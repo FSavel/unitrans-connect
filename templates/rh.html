@@ -1,36 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RH</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{{ t.rh_title }}</title>
 
 <style>
 body{
-font-family:Arial;
-padding:30px;
-background:#f2f2f2;
-text-align:center;
+    font-family: Arial, sans-serif;
+    background:#f4f6f8;
+    margin:0;
 }
 
-.box{
-background:white;
-padding:30px;
-border-radius:15px;
+.container{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+h2{
+    text-align:center;
+    color:#0d4d2c;
+}
+
+p{
+    text-align:center;
+    color:#555;
+}
+
+label{
+    font-weight:bold;
+    color:#0d4d2c;
+    display:block;
+    margin-top:10px;
+}
+
+select, textarea, button{
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    font-size:14px;
+}
+
+textarea{
+    height:120px;
+    resize:none;
+}
+
+button{
+    background:#0d4d2c;
+    color:white;
+    border:none;
+    cursor:pointer;
+    margin-top:15px;
+}
+
+button:hover{
+    background:#14683c;
+}
+
+.back{
+    display:block;
+    margin-top:20px;
+    text-align:center;
+    background:#0d4d2c;
+    color:white;
+    padding:10px;
+    border-radius:8px;
+    text-decoration:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
+<div class="card">
 
-<h2>Contactar RH</h2>
+<h2>{{ t.rh_title }}</h2>
 
-<p>📞 +258 879131089</p>
+<p>{{ t.rh_text }}</p>
 
-<p>Estamos disponíveis para apoiar.</p>
+<form>
 
+<label>
+{% if session["lang"] == "en" %}
+Message Type
+{% else %}
+Tipo de Mensagem
+{% endif %}
+</label>
+
+<select>
+<option>
+{% if session["lang"] == "en" %}Suggestion{% else %}Sugestão{% endif %}
+</option>
+
+<option>
+{% if session["lang"] == "en" %}Complaint{% else %}Reclamação{% endif %}
+</option>
+
+<option>
+{% if session["lang"] == "en" %}HR Request{% else %}Pedido RH{% endif %}
+</option>
+
+<option>
+{% if session["lang"] == "en" %}Technical Issue{% else %}Problema Técnico{% endif %}
+</option>
+</select>
+
+<label>
+{% if session["lang"] == "en" %}
+Message
+{% else %}
+Mensagem
+{% endif %}
+</label>
+
+<textarea placeholder="
+{% if session['lang'] == 'en' %}
+Write your message here...
+{% else %}
+Escreva sua mensagem aqui...
+{% endif %}
+"></textarea>
+
+<button type="button">
+{{ t.send }}
+</button>
+
+</form>
+
+<a class="back" href="/menu">
+{% if session["lang"] == "en" %}
+Back to Menu
+{% else %}
+Voltar ao Menu
+{% endif %}
+</a>
+
+</div>
 </div>
 
 </body>
